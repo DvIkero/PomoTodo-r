@@ -12,15 +12,15 @@ https://github.com/DvIkero/PomoTodo
 
 如果您想要使用它，請確保您已經安裝了npm套件管理器並於main以及renderer資料夾下皆輸入以下指令：
 
-> ```
-> npm install
-> ```
+```
+npm install
+```
 
 若要啟動的話，請分別在兩個目錄下輸入以下指令：
 
-> ```
-> npm start
-> ```
+```
+npm start
+```
 
 ## 安裝檔
 
@@ -36,9 +36,9 @@ Windows: https://www.jianguoyun.com/p/DWyMomYQ9byvCBi7-JID
 
 首先，請到renderer資料夾下，輸入以下指令將react打包
 
-> ```
-> npm run build
-> ```
+```
+npm run build
+```
 
 接著，若你沒有修改任何參數，你會看倒renderer下新建立的build資料夾，請將它複製到main/src底下，並且打開main/src/index.js，將
 
