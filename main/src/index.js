@@ -6,8 +6,14 @@ const {app, BrowserWindow} = require('electron');let win;function createWindow (
         nodeIntegration: false,
         webSecurity: false,
         preload: __dirname + '/preload.js' // <--- (2) Preload script
-    }});win.loadURL(`http://localhost:3000`); // <--- (3) Loading react
-    
+    }});
+ 
+  win.loadURL(`http://localhost:3000`); 
+  /* ^ Loading react 
+  if you are ready to build this program, put built react file under main/src and change it to
+  win.loadURl(`file://${__dirname}/build/index.html`);
+  */
+
   //win.webContents.openDevTools();
   win.on('closed', () => {  
       win = null

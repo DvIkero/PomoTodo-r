@@ -23,7 +23,7 @@
   "scripts": {
     "electron": "electron src",
     "start": "NODE_ENV=dev nodemon --watch ./src/**/* --watch . --exec 'yarn electron'",
-    "build": "NODE_ENV=prod electron-builder"
+    "build": "NODE_ENV=prod electron-builder -mwl"
   },
   "dependencies": {
     "nedb-promises": "^4.0.3",
