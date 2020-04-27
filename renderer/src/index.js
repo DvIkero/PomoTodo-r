@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 
+//color sitting
 let color0 = "#465c70"
 let color1 = "#607d92"
 let color2  = "#869fb1"
@@ -94,6 +95,32 @@ const focusingStyle = {
   boxShadow: "0px 0px 10px 3px " + color0
 }
 
+const InputForm =(props)=>{
+
+  const Press = (event) =>{
+    props.KeyPress(event)
+  }
+  return <div style={InputFormStyle}><textarea cols="100" onKeyPress={Press} style={InputBoxStyle} placeholder="請輸入任務名稱"/></div>
+}
+
+const TodoItem = (props) => {
+  const TodoItemStyle = {
+    color: color3,
+    margin: "20px 5px",
+    padding: "10px",
+    width: "150px",
+    borderRadius: "3px 3px",
+    backgroundColor: color0,
+    boxShadow: "0px 0px 10px 3px " + color0
+  }
+  const Click = () => {
+    props.RemoveTodoItem(props.index)
+  }
+  return (
+    <div onClick={Click} style={TodoItemStyle}>{props.value} </div>
+    )
+} 
+
 class TimerInput extends React.Component{
   state:{
     h:0,
@@ -145,32 +172,6 @@ class TimerInput extends React.Component{
     )
   }
 }
-
-const InputForm =(props)=>{
-
-  const Press = (event) =>{
-    props.KeyPress(event)
-  }
-  return <div style={InputFormStyle}><textarea cols="100" onKeyPress={Press} style={InputBoxStyle} placeholder="請輸入任務名稱"/></div>
-}
-
-const TodoItem = (props) => {
-  const TodoItemStyle = {
-    color: color3,
-    margin: "20px 5px",
-    padding: "10px",
-    width: "150px",
-    borderRadius: "3px 3px",
-    backgroundColor: color0,
-    boxShadow: "0px 0px 10px 3px " + color0
-  }
-  const Click = () => {
-    props.RemoveTodoItem(props.index)
-  }
-  return (
-    <div onClick={Click} style={TodoItemStyle}>{props.value} </div>
-    )
-} 
 
 class MainBoard extends React.Component{
   state: {
