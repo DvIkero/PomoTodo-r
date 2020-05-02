@@ -1,207 +1,57 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import * as serviceWorker from './serviceWorker';
+import styled from 'styled-components';
+import '@atlaskit/css-reset';
+import {DragDropContext} from 'react-beautiful-dnd';
+import Column from './component/column.jsx';
+import initialData from './initial-data.js';
 
-let color0 = "#465c70"
-let color1 = "#607d92"
-let color2  = "#869fb1"
-let color3 = "#b8c7d7"
+let DontSave = false
 
-let TimerTime = 0
-let displayCondition = 0
+const MainBoard = styled.div`
+  user-select: none;
+  outline: none;
+  button: focus {outline:0;};
+`;
 
-const LeftDivStyle = {
-  float:"left",
-  width:"200px",
-  height: "auto",
-  marginRight: "-400px",
-  margin: "10px 10px",
-  padding: "10px",
-  backgroundColor: color3,
-  boxShadow: "0px 0px 10px 3px " + color3
-}
+const ToDoDiv = styled.div`
+  position: absolute;
+  left:0px;
+`;
 
-const RightDivStyle = {
-  color: color3,
-  float: "right",
-  width:"300px",
-  height: "auto",
-  backgroundColor: color0,
-  margin: "10px 5px",
-  padding: "10px",
-  borderRadius: "3px",
-  boxShadow: "0px 0px 10px 3px " + color0
-}
+const PomodoroDiv = styled.div`
+  position: absolute;
+  right:0px;
+`;
 
-const buttonStyle = {
-  margin: "0px 3px",
-  backgroundColor: color1,
-  height: "25px",
-  width: "auto",
-  boxShadow: "0 0px 6px 0px" + color1,
-  border: "0px",
-  color: color3,
-  borderRadius: "10px"
-}
-
-const InputFormStyle = {
-  margin: "10px 5px",
-  padding: "10px",
-  width: "150px",
-  borderRadius: "3px",
-  backgroundColor: color2,
-  color: color3,
-  boxShadow: "0px 0px 10px 3px " + color2
-  }
-
-const InputBoxStyle = {
-  width: "100%",
-  height: "25px",
-  backgroundColor: color2,
-  border: "0",
-  borderRadius: "3px",
-  resize: "none", 
-  color: "block"
-}
-
-const TimerInputStyle = {
-  color: color0,
-  margin: "10px 5px",
-  padding: "10px",
-  width: "auto",
-  borderRadius: "3px",
-  backgroundColor: color2,
-}
-
-const TimerInputFormStyle = {
-  width: "30px",
-  height: "20px",
-  backgroundColor: color0,
-  border: "0",
-  borderRadius: "3px",
-  resize: "none",
-  color: color2
-}
-
-const focusingStyle = {
-  color: color3,
-  width:"auto",
-  height: "auto",
-  backgroundColor: color0,
-  margin: "10px 5px",
-  padding: "10px",
-  borderRadius: "10px",
-  boxShadow: "0px 0px 10px 3px " + color0
-}
-
-class TimerInput extends React.Component{
-  state:{
-    h:0,
-    m:0,
-    s:0
-  }
+class App extends Component {
+  state = initialData
 
   constructor(props){
     super(props)
-    this.state = {
-      h:0,
-      m:0,
-      s:0
-    }
-    this.NumChange = this.NumChange.bind(this)
-    this.Submit = this.Submit.bind(this)
+    this.createNewTask = this.createNewTask.bind(this)
+    this.ProceedTimeToTask = this.ProceedTimeToTask.bind(this)
   }
 
-  NumChange(event){
-    if(event.target.placeholder === "hours"){
+  componentDidMount(){
+    console.log(this.state)
+    this.setupBeforeUnloadListener();
+    const state = JSON.parse(localStorage.getItem('IndexData'))
+    if(state){
       this.setState({
-        h: parseInt(event.target.value)
+        ...state
       })
     }
-    if(event.target.placeholder === "minute"){
-      this.setState({
-        m: parseInt(event.target.value)
-      })
-    }
-    if(event.target.placeholder === "second"){
-      this.setState({
-        s: parseInt(event.target.value)
-      })
-    }
-  }
-
-  Submit(){
-    this.props.Submit(this.state.h*60*60 + this.state.m*60 + this.state.s)
-  }
-
-  render(){
-    return(
-      <div style={TimerInputStyle}>
-      <input type="number" value={this.state.h} placeholder="hours" min="0" onChange={this.NumChange} style={TimerInputFormStyle}/>&nbsp;時&nbsp;
-      <input type="number" value={this.state.m} placeholder="minute" max="59" min="0" onChange={this.NumChange} style={TimerInputFormStyle}/>&nbsp;分&nbsp; 
-      <input type="number" value={this.state.s} placeholder="second" max="59" min="0" onChange={this.NumChange} style={TimerInputFormStyle}/>&nbsp;秒&nbsp;&nbsp;&nbsp;
-      <button type="button" style={buttonStyle} onClick={this.Submit}>Start Timer</button>
-      </div>
-    )
-  }
-}
-
-const InputForm =(props)=>{
-
-  const Press = (event) =>{
-    props.KeyPress(event)
-  }
-  return <div style={InputFormStyle}><textarea cols="100" onKeyPress={Press} style={InputBoxStyle} placeholder="請輸入任務名稱"/></div>
-}
-
-const TodoItem = (props) => {
-  const TodoItemStyle = {
-    color: color3,
-    margin: "20px 5px",
-    padding: "10px",
-    width: "150px",
-    borderRadius: "3px 3px",
-    backgroundColor: color0,
-    boxShadow: "0px 0px 10px 3px " + color0
-  }
-  const Click = () => {
-    props.RemoveTodoItem(props.index)
-  }
-  return (
-    <div onClick={Click} style={TodoItemStyle}>{props.value} </div>
-    )
-} 
-
-class MainBoard extends React.Component{
-  state: {
-    time: 0,
-    items: [],
-    doingTime: [],
-    target: null,
-    MainBoardTimer: null,
-    mode: ""
-  }
-  constructor(props){
-    super(props)
-    this.state = {
-      time: 0,
-      items: [],
-      doingTime: [],
-      target: null,
-      MainBoardTimer: null,
-      mode: "StopWatch"
-    }
-    this.StopWatch = this.StopWatch.bind(this)
-    this.SwitchMod = this.SwitchMod.bind(this)
-    this.StartDoing = this.StartDoing.bind(this)
-    this.ReceiveTime = this.ReceiveTime.bind(this)
+    console.log(JSON.parse(localStorage.getItem('IndexData')))
+    console.log(this.state)
   }
 
   doSomethingBeforeUnload = () => {
-    localStorage.removeItem('items')
-    localStorage.removeItem('doingTime')
-    localStorage.setItem("items",JSON.stringify(this.state.items))
-    localStorage.setItem('doingTime',JSON.stringify(this.state.doingTime))
+    if(!DontSave){
+      localStorage.removeItem('IndexData')
+      localStorage.setItem('IndexData', JSON.stringify(this.state))
+    }
   }
 
   setupBeforeUnloadListener = () => {
@@ -211,251 +61,133 @@ class MainBoard extends React.Component{
   })
   }
 
-  componentDidMount(){
-    document.title = "PomoTodo"
-    this.setupBeforeUnloadListener();
-    if(localStorage.getItem('items') != null && localStorage.getItem('doingTime') != null){
+  CleanAll =()=> {
+    localStorage.clear()
+    DontSave = true
+  }
+
+  onDragEnd = result => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination){
+      return;
+    }
+
+    if (
+      destination.draggableId === source.draggableId &&
+      destination.index === source.index && 
+      destination.droppableId === source.droppableId
+    ){
+      return;
+    }
+    if(destination.droppableId === 'column-3'){
+      const NewColumns = this.state.columns
+      NewColumns[source.droppableId].taskIds.splice(source.index,1)
       this.setState({
-        items: JSON.parse(localStorage.getItem('items')),
-        doingTime: JSON.parse(localStorage.getItem('doingTime'))
-      })
-    }
-  }
-
-  ReceiveTime(t){
-    if(t === "NaN"){
-      alert("請輸入正確內容")
-      t = 0
-    }
-    this.setState({
-      time: t
+      columns: NewColumns
     })
-    this.StartDoing()
-  }
-
-  CreateNewTodoItem =(event)=>{
-    if(event.key === 'Enter'){
-    const Newitems = [...this.state.items, event.target.value]
-    const NewDoingTime = [...this.state.doingTime, 0]
-    this.setState({
-      items: Newitems,
-      doingTime: NewDoingTime
-    }) 
-    event.target.value = ""
+      return;
     }
-  }
-
-  RemoveTodoItem =()=>{
-    let index = this.state.target
-    const Newitems = [...this.state.items.slice(0,index),...this.state.items.slice(index+1)]
-    const NewDoingTime = [...this.state.doingTime.slice(0,index),...this.state.doingTime.slice(index+1)]
+    const NewColumns = this.state.columns
+    NewColumns[source.droppableId].taskIds.splice(source.index,1)
+    NewColumns[destination.droppableId].taskIds.splice(destination.index, 0, draggableId)
     this.setState({
-      items: Newitems,
-      doingTime: NewDoingTime,
-      target: null
+      columns: NewColumns
     })
-  }
+  };
 
-  launchTodoItem =(index)=>{
+  createNewTask(content){
+    //create new task
+    let newTasks = this.state.tasks
+    newTasks['task-' + this.state.idCount] = { id: 'task-' + this.state.idCount, content: content, completed: false, ProceedTime: 0}
+    let NewColumns = this.state.columns
+    NewColumns['column-1'].taskIds.push('task-' + this.state.idCount)
+    console.log(this.state.idCount)
     this.setState({
-      target: index
+      idCount: this.state.idCount + 1,
+      tasks: newTasks,
+      columns: NewColumns,
     })
   }
 
-  SwitchMod(){
-    if(this.state.mode === "StopWatch"){
-      this.setState({
-        mode: "Timer"
-      })
-    }else{
-      this.setState({
-        mode: "StopWatch"
-      })
-    }
-  }
-
-  StartDoing(){
-    if(this.state.mode === "StopWatch"){
-      this.StopWatch()
-    }else{
-      this.Timer()
-    }
-  }
-
-  Timer(){
-    const StopTimer = () =>{
-      clearInterval(this.state.MainBoardTimer)
-        this.setState({
-          MainBoardTimer: null
-        })
-        let index = this.state.target
-        let NewDoingTime = this.state.doingTime
-        NewDoingTime[index] = TimerTime
-        this.setState({
-          doingTime: NewDoingTime,
-          time: 0
-        })
-    }
-    const Ticking = () => {
-      if(this.state.time > 0){
-      this.setState({
-        time: this.state.time - 1
-      })
-      TimerTime += 1
-    }
-      else{
-        StopTimer()
-      }
-    }
-    if(this.state.MainBoardTimer === null || this.state.MainBoardTimer === undefined){
-      this.setState({
-        MainBoardTimer: setInterval(function(){Ticking()},1000)
-      }) 
-    }
-      else{
-        StopTimer()
-      }
-  }
-
-  StopWatch(){
-    const Ticking =()=>{
-        const NewTime = this.state.time + 1
-        this.setState({time: NewTime})
-    }
-    if(this.state.MainBoardTimer === null || this.state.MainBoardTimer === undefined){
+  ProceedTimeToTask(columnId, ProceedTime){
+    //modify the task
+    let NewTasks = this.state.tasks
+    this.state.columns[columnId].taskIds.forEach(element => {
+      let NewTask = this.state.tasks[element]
+      NewTask.ProceedTime += ProceedTime
+      NewTasks[element] = NewTask 
+    },this)
     this.setState({
-      MainBoardTimer: setInterval(function(){Ticking()},1000)
-    }) 
-  }
-    else{
-      clearInterval(this.state.MainBoardTimer)
+      tasks: NewTasks
+    })
+    /*
+    this.state.columns[columnId].taskIds.array.forEach(element => {
+      const task = this.state.tasks[element]
+      const tasks = this.state.tasks
+      task.ProceedTime = ProceedTime
+      tasks[element] = task
       this.setState({
-        MainBoardTimer: null
+        tasks: tasks
       })
-      let index = this.state.target
-      let NewDoingTime = this.state.doingTime
-      NewDoingTime[index] = this.state.time
-      this.setState({
-        doingTime: NewDoingTime,
-        time: 0
-      })
-    }
-  }
+    });
+    */
+  }  
 
-  DisplayTime(InputSecond){
-    let minutes = parseInt(InputSecond/60)
-    let hours = parseInt(minutes/60)
-    let days = parseInt(hours/24)
-    let second = InputSecond - parseInt(InputSecond/60)*60
-    minutes -= hours*60
-    hours -= days*24
-    if(days > 0){
-      return days + "天" + hours + "小時" + minutes + "分" + second + "秒"
-    }
-    if(hours > 0){
-      return hours + "小時" + minutes + "分" + second + "秒"
-    }
-    if(minutes > 0){
-      return minutes + "分" + second + "秒"
-    }
-    else{
-      return second + "秒"
-    }
+  completeTask =(taskId, state)=> {
+    let tasks = this.state.tasks
+    tasks[taskId].completed = state
+    this.setState({
+      tasks: tasks
+    })
+  }
+  
+        /*
+        {this.state.columnOrder.map((columnId) => {
+          const column = this.state.columns[columnId];
+          const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
+
+        return <Column key={column.id} column={column} tasks={tasks} createNewTask={this.createNewTask} ProceedTimeToTask={this.ProceedTimeToTask} completeTask={this.completeTask}/>
+      })}
+      */
+      //<button onClick={this.CleanAll}>回復原廠設定</button>
+  DisplayColumn = () => {
+    const ToDoColumn = this.state.columns['column-1']
+    const ToDoTasks = ToDoColumn.taskIds.map(taskId => this.state.tasks[taskId])
+    const Pomodoro = this.state.columns['column-2']
+    const PomodoroTasks = Pomodoro.taskIds.map(taskId => this.state.tasks[taskId])
+    const TrashCan = this.state.columns['column-3']
+    const TrashCanTasks = TrashCan.taskIds.map(taskId => this.state.tasks[taskId])
+    return (
+      <div>
+        <ToDoDiv>
+          <Column key={ToDoColumn.id} column={ToDoColumn} tasks={ToDoTasks} createNewTask={this.createNewTask} ProceedTimeToTask={this.ProceedTimeToTask} completeTask={this.completeTask}/>
+          <Column key={TrashCan.id} column={TrashCan} tasks={TrashCanTasks} />
+        </ToDoDiv>
+        <PomodoroDiv>
+          <Column key={Pomodoro.id} column={Pomodoro} tasks={PomodoroTasks} ProceedTimeToTask={this.ProceedTimeToTask} completeTask={this.completeTask}/>
+        </PomodoroDiv>
+      </div>
+      )
   }
 
   render(){
-    if(this.state.MainBoardTimer === null){
-      if(this.state.target === null){
-          displayCondition = 0
-        }else{
-          if(this.state.mode === "StopWatch"){
-          displayCondition = 1
-        }
-        else{
-          displayCondition = 2
-        }
-      }
-    }else{
-      if(this.state.mode === "Timer"){
-          displayCondition = 3
-      }
-      else{
-          displayCondition = 4
-      }
-    }
-
-    const LeftDiv = () => { return(<div style={LeftDivStyle}>
-      <InputForm KeyPress={this.CreateNewTodoItem} />
-      <div>{this.state.items.map((value,index)=><TodoItem value={value} index={index} target={this.state.target} key={index} RemoveTodoItem={this.launchTodoItem}/>)}</div>
-      </div>)}
-
-  switch(displayCondition){
-    default:
-      case 0:
-          return(
-              <div>
-                <LeftDiv/>
-                <div style={RightDivStyle}>
-                <h1>想做什麼?</h1>
-                <p>在左側新增或選擇任務</p>
-                </div>
-              </div>
-          )
-      case 1:
-          return (
-              <div>
-                <LeftDiv/>
-                <div style={RightDivStyle}>
-                <h1>{this.state.items[this.state.target]} </h1>
-                <p>已投入 {this.DisplayTime(this.state.doingTime[this.state.target])}</p>
-                <button type="button" style={buttonStyle} onClick={this.StartDoing}>Start StopWatch</button>
-                <button type="button" style={buttonStyle} onClick={this.SwitchMod}>Switch to Timer</button>
-                <button type="button" style={buttonStyle} onClick={this.RemoveTodoItem}>delete</button>
-                </div>
-              </div>
-            )
-      case 2:
-          return (
-              <div>
-                <LeftDiv/>
-                <div style={RightDivStyle}>
-                <h1>{this.state.items[this.state.target]} </h1>
-                <p>已投入 {this.DisplayTime(this.state.doingTime[this.state.target])}</p>
-                  <TimerInput Submit={this.ReceiveTime}/>
-                  <button type="button" style={buttonStyle} onClick={this.SwitchMod}>Switch to StopWatch</button>
-                  <button type="button" style={buttonStyle} onClick={this.RemoveTodoItem}>delete</button>
-                </div>
-              </div>
-            )
-      case 3:
-          return(
-            <div style={focusingStyle}> 
-            <h1>專注...</h1>
-              <p>現在在做的是 {this.state.items[this.state.target]}.</p>
-              <p>你還剩下{this.DisplayTime(this.state.time)}</p>
-              <button type="button" style={buttonStyle} onClick={this.StartDoing}>leave</button>
-          </div>
-            )
-      case 4:
-          return(
-            <div style={focusingStyle}>
-              <h1>專注...</h1>
-              <p>現在在做的是 {this.state.items[this.state.target]}</p>
-              <p>你已經專注了 {this.DisplayTime(this.state.time)}</p>
-              <button type="button" style={buttonStyle} onClick={this.StartDoing}>leave</button>
-          </div>
-
-            )
-    }
+    return(
+    <div>
+      <DragDropContext  onDragEnd={this.onDragEnd}>
+      {this.DisplayColumn()}
+      </DragDropContext>
+    </div>
+    );
   }
 }
 
 ReactDOM.render(
   <div>
-    <MainBoard/>
-  </div>,
-  document.getElementById('root')
-);
+  <MainBoard>
+    <App />
+  </MainBoard>
+  </div>, document.getElementById("root"));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
