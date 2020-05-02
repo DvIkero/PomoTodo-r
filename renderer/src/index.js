@@ -136,9 +136,20 @@ class App extends Component {
 
   completeTask =(taskId, state)=> {
     let tasks = this.state.tasks
+    let NewColumns = this.state.columns
     tasks[taskId].completed = state
+    if(state === true){
+      if(this.state.columns['column-2'].taskIds.includes(taskId)){
+        NewColumns['column-2'].taskIds.splice(NewColumns['column-2'].taskIds.indexOf(taskId),1)
+        NewColumns['column-1'].taskIds.push(taskId)
+      }else{
+        NewColumns['column-1'].taskIds.splice(NewColumns['column-1'].taskIds.indexOf(taskId),1)
+        NewColumns['column-1'].taskIds.push(taskId)
+      }
+    }
     this.setState({
-      tasks: tasks
+      tasks: tasks,
+      columns: NewColumns
     })
   }
   

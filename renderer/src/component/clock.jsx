@@ -371,7 +371,7 @@ class Clock extends React.Component {
       return(
         <div>
           <OptionBoardStyle>
-          <p>Work : {this.state.work}</p>
+          <p>work : {this.state.work}</p>
           <input name='work' type='range' min='1' max='60' value={this.state['work']} onChange={e => this.onChange(e)}></input>
           <p>short break : {this.state.shortBreak} </p>
           <input name='shortBreak' type='range' min='1' max='60' value={this.state['shortBreak']} onChange={e => this.onChange(e)}></input>
