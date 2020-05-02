@@ -355,7 +355,7 @@ class Clock extends React.Component {
         <DisplayBoardStyle>
           <p>階段：{this.state.mode[this.state.stage] ? this.state.mode[this.state.stage]: this.state.mode[0]}</p>
           <p>計時{this.state.Timer ? this.DisplayTime(this.state.time) : this.state.isPause ? this.DisplayTime(this.state.leftTime*60) : this.DisplayTime(this.state[this.state.mode[this.state.stage]]*60)}</p>
-          <p>已進行{this.state.progress + "/" +this.state.round}</p>
+          <p>已進行至{this.state.progress + "/" +this.state.round}輪</p>
         </DisplayBoardStyle>
       </div>
     )
