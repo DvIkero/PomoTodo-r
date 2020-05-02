@@ -6,7 +6,7 @@ import Clock from './clock.jsx'
 
 //color sitting
 let color0 = "#cbd1d5" //background color
-let color1 = "#607d92"
+//let color1 = "#607d92"
 let color2  = "#869fb1"
 let color3 = "#b8c7d7"
 

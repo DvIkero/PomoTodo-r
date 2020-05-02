@@ -5,7 +5,7 @@ import { Draggable } from 'react-beautiful-dnd';
 //color sitting
 let color0 = "#465c70"
 let color1 = "#607d92"
-let color2  = "#869fb1"
+//let color2  = "#869fb1"
 let color3 = "#b8c7d7"
 
 /*

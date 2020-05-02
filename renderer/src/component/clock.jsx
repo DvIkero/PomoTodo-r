@@ -11,13 +11,6 @@ let color1 = "#607d92"
 let color2  = "#869fb1"
 let color3 = "#b8c7d7"
 
-const Container = styled.div`
-    width: auto;
-    margin: 8px;
-    border: 1px solid ${color1};
-    background-color: ${color1};
-    border-radius: 2px;
-`;
 /*
 margin: "0px 3px";
 background-color: color1;
