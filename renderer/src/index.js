@@ -35,7 +35,7 @@ class App extends Component {
   }
 
   componentDidMount(){
-    console.log(this.state)
+    document.title = "PomoTodo"
     this.setupBeforeUnloadListener();
     const state = JSON.parse(localStorage.getItem('IndexData'))
     if(state){
@@ -43,8 +43,6 @@ class App extends Component {
         ...state
       })
     }
-    console.log(JSON.parse(localStorage.getItem('IndexData')))
-    console.log(this.state)
   }
 
   doSomethingBeforeUnload = () => {
@@ -102,7 +100,6 @@ class App extends Component {
     newTasks['task-' + this.state.idCount] = { id: 'task-' + this.state.idCount, content: content, completed: false, ProceedTime: 0}
     let NewColumns = this.state.columns
     NewColumns['column-1'].taskIds.push('task-' + this.state.idCount)
-    console.log(this.state.idCount)
     this.setState({
       idCount: this.state.idCount + 1,
       tasks: newTasks,
