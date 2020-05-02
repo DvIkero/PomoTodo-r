@@ -11,11 +11,11 @@ let color2  = "#869fb1"
 let color3 = "#b8c7d7"
 
 const TrashCan = styled.div`
-    min-height: 10px;
-    margin: 8px;
-    border: 0px solid ${color2};
-    border-radius: 2px;
-    background-color: ${props => (props.isDraggingOver ? '#cdcac5' : color2)};
+    padding: 8px;
+    background-color: ${props => (props.isDraggingOver ? '#cdcac5' : color2 )};
+    box-shadow: 0 0px 6px 0px ${props => (props.isDraggingOver ? '#cdcac5' : color2 )};
+    border: 0px;
+    border-radius: 2px;;
 `;
 /*
 const Container = styled.div`
@@ -133,6 +133,7 @@ export default class Column extends React.Component {
                                 <Task key={task.id} task={task} index={index} completeTask={this.completeTask}/>
                             ))}
                             {provided.placeholder}
+                            {(this.props.column.taskIds.length === 0) ? "請將待辦放置於此或新增待辦" : ""}
                         </TaskList>
                     )}
                     </Droppable>
@@ -157,6 +158,7 @@ export default class Column extends React.Component {
                                     <Task key={task.id} task={task} index={index} completeTask={this.completeTask} backgroundColor={'blue'}/>
                                 ))}
                                 {provided.placeholder}
+                                {(this.props.column.taskIds.length === 0) ? "將待辦放置於此開始工作" : ""}
                             </TaskList>
                         )}
                         </Droppable>
@@ -181,6 +183,7 @@ export default class Column extends React.Component {
                                     <Task key={task.id} task={task} index={index}/>
                                 ))}
                                 {provided.placeholder}
+                                {(this.props.column.taskIds.length === 0) ? "刪除待辦" : ""}
                             </TrashCan>
                         )}
                         </Droppable>
