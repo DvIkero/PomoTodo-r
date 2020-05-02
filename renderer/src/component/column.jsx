@@ -133,7 +133,7 @@ export default class Column extends React.Component {
                                 <Task key={task.id} task={task} index={index} completeTask={this.completeTask}/>
                             ))}
                             {provided.placeholder}
-                            {(this.props.column.taskIds.length === 0) ? "請將待辦放置於此或新增待辦" : ""}
+                            {(this.props.column.taskIds.length === 0) ? snapshot.isDraggingOver ? "" : "請將待辦放置於此或新增待辦" : ""}
                         </TaskList>
                     )}
                     </Droppable>
@@ -158,7 +158,7 @@ export default class Column extends React.Component {
                                     <Task key={task.id} task={task} index={index} completeTask={this.completeTask} backgroundColor={'blue'}/>
                                 ))}
                                 {provided.placeholder}
-                                {(this.props.column.taskIds.length === 0) ? "將待辦放置於此開始工作" : ""}
+                                {(this.props.column.taskIds.length === 0) ? snapshot.isDraggingOver ? "" : "將待辦放置於此開始工作" : ""}
                             </TaskList>
                         )}
                         </Droppable>
@@ -183,7 +183,7 @@ export default class Column extends React.Component {
                                     <Task key={task.id} task={task} index={index}/>
                                 ))}
                                 {provided.placeholder}
-                                {(this.props.column.taskIds.length === 0) ? "刪除待辦" : ""}
+                                {(this.props.column.taskIds.length === 0) ? snapshot.isDraggingOver ? "" : "刪除待辦" : ""}
                             </TrashCan>
                         )}
                         </Droppable>
