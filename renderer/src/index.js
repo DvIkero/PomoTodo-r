@@ -183,7 +183,6 @@ class App extends Component {
   render(){
     return(
     <div>
-    <button onClick={this.CleanAll}>回復原廠設定</button>
       <DragDropContext  onDragEnd={this.onDragEnd}>
       {this.DisplayColumn()}
       </DragDropContext>
