@@ -148,4 +148,8 @@ psd
 thumb
 sketch
 
+###electron builder output###
+
+build/
+
 # End of https://www.gitignore.io/api/node,react,macos
