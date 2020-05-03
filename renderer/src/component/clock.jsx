@@ -389,7 +389,7 @@ class Clock extends React.Component {
               <ButtonBoard>
               <StyleButton onClick={() => this.Pomodoro('start&pause')}>{this.state.Timer ? 'Pause' : 'Start'}</StyleButton>
               <StyleButton onClick={() => this.Pomodoro('reset')}>reset</StyleButton>
-              <StyleButton onClick={() => this.Pomodoro('skip')}>skip</StyleButton>
+              <StyleButton onClick={() => this.Pomodoro('skip')}>next</StyleButton>
               <StyleButton onClick={() => this.OptionBoard(true)}>option{this.state.option ? '(^)' : '(v)'}</StyleButton>
               </ButtonBoard>
               {this.OptionBoard()}

@@ -20,7 +20,7 @@ const initialDate = {
         'column-3':{
             id: 'column-3',
             type: 'trash',
-            title: 'trash can',
+            title: 'Trash can',
             taskIds: [],
         },
     },

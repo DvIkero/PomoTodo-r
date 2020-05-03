@@ -108,9 +108,9 @@ export default class Task extends React.Component {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       ref={provided.innerRef}
-                      isCompleted = {this.state.completed}
+                      isCompleted = {this.props.task.completed}
                   >
-                      <TextArea isCompleted = {this.state.completed}>
+                      <TextArea isCompleted = {this.props.task.completed}>
                       <p>{this.props.task.content}</p>
                       </TextArea>
                       <StyleButton onClick={() => {this.completeTask()}}>{this.props.task.completed ? "已完成" : "完成"}</StyleButton>
