@@ -140,6 +140,8 @@ temp/
 **/*.backup.*
 **/*.back.*
 
+build/
+
 node_modules
 
 *.sublime*
@@ -147,5 +149,7 @@ node_modules
 psd
 thumb
 sketch
+
+
 
 # End of https://www.gitignore.io/api/node,react,macos
