@@ -4,6 +4,7 @@ import UIfx from 'uifx';
 import C2 from './sound/C2.ogg';
 import D2 from './sound/D2.ogg';
 import allRing from './sound/allRing.ogg'
+import icon from './icon/PomoToDo.ico'
 
 //color sitting
 let color0 = "#465c70"
@@ -114,7 +115,8 @@ class Clock extends React.Component {
       isPause: false,
       DoingTime: 0,
       progress: 1,
-      option: false
+      option: false,
+      notifyMe: true
   } 
 
   constructor(props){
@@ -133,7 +135,8 @@ class Clock extends React.Component {
           isPause: false,
           DoingTime: 0,
           progress: 1,
-          option: false
+          option: false,
+          notifyMe: true
       }
       this.Timer = this.Timer.bind(this)
       this.ProceedTimeToTask = this.ProceedTimeToTask.bind(this)
@@ -196,6 +199,22 @@ class Clock extends React.Component {
       }
   }
 
+  notify =(text,change)=>{
+    let notifyMe = this.state.notifyMe
+    if(change){
+      this.setState({
+        notifyMe: !this.state.notifyMe
+      })
+      notifyMe = !notifyMe
+    }
+    if(notifyMe){
+        var notification = new Notification(text,{
+        body: text,
+        icon: icon
+        });
+    }
+  }
+
   Pomodoro = (action) => {
     let time
     let stage = this.state.stage
@@ -203,12 +222,14 @@ class Clock extends React.Component {
     let isPause = this.state.isPause
     const mode = this.state.mode
     const TimerExist = !!this.state.Timer
-    if(action === 'skip'){
+    if(action === 'next'){
       if(!!mode[stage+1]){
         if(mode[stage] === 'shortBreak'){
+          this.notify('開始工作！')
           //play start to work sound
           nextSound.setVolume(this.state.volume).play()
         }else{
+          this.notify('休息一會')
           //play relax sound
           relax.setVolume(this.state.volume).play()
         }
@@ -219,6 +240,7 @@ class Clock extends React.Component {
       }else{
         stage = 0
         progress = 1
+        this.notify('你完成了一顆蕃茄！')
         //play finish a pomodoro sound
         aPomodoro.setVolume(this.state.volume).play()
       }
@@ -301,7 +323,7 @@ class Clock extends React.Component {
       }
         else{
           StopTimer()
-          this.Pomodoro('skip')
+          this.Pomodoro('next')
         }
       }
       if(this.state.Timer === null){
@@ -364,6 +386,7 @@ class Clock extends React.Component {
       return(
         <div>
           <OptionBoardStyle>
+          <StyleButton onClick={() => this.notify('開啟通知',true)}>{this.state.notifyMe ? "關閉通知" : "開啟通知"}</StyleButton>
           <p>work : {this.state.work}</p>
           <input name='work' type='range' min='1' max='60' value={this.state['work']} onChange={e => this.onChange(e)}></input>
           <p>short break : {this.state.shortBreak} </p>
@@ -389,7 +412,7 @@ class Clock extends React.Component {
               <ButtonBoard>
               <StyleButton onClick={() => this.Pomodoro('start&pause')}>{this.state.Timer ? 'Pause' : 'Start'}</StyleButton>
               <StyleButton onClick={() => this.Pomodoro('reset')}>reset</StyleButton>
-              <StyleButton onClick={() => this.Pomodoro('skip')}>next</StyleButton>
+              <StyleButton onClick={() => this.Pomodoro('next')}>next</StyleButton>
               <StyleButton onClick={() => this.OptionBoard(true)}>option{this.state.option ? '(^)' : '(v)'}</StyleButton>
               </ButtonBoard>
               {this.OptionBoard()}
