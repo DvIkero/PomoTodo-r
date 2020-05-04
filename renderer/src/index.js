@@ -3,8 +3,9 @@ import ReactDOM from "react-dom";
 import * as serviceWorker from './serviceWorker';
 import styled from 'styled-components';
 import '@atlaskit/css-reset';
-import {DragDropContext} from 'react-beautiful-dnd';
+import {DragDropContext, Droppable} from 'react-beautiful-dnd';
 import Column from './component/column.jsx';
+import OptionBoard from './component/OptionBoard.jsx'
 import initialData from './initial-data.js';
 
 let DontSave = false
@@ -15,14 +16,9 @@ const MainBoard = styled.div`
   button: focus {outline:0;};
 `;
 
-const ToDoDiv = styled.div`
-  position: absolute;
-  left:0px;
-`;
-
-const PomodoroDiv = styled.div`
-  position: absolute;
-  right:0px;
+const Container = styled.div`
+  display: flex;
+  height: auto;
 `;
 
 class App extends Component {
@@ -66,8 +62,9 @@ class App extends Component {
   }
 
   onDragEnd = result => {
-    const { destination, source, draggableId } = result;
-
+    const { destination, source, draggableId, type } = result;
+    console.log(source)
+    console.log(destination)
     if (!destination){
       return;
     }
@@ -79,9 +76,27 @@ class App extends Component {
     ){
       return;
     }
-    if(destination.droppableId === 'column-3'){
+
+    if(type === 'column'){
+      const newColumnOrder = Array.from(this.state.columnOrder)
+      newColumnOrder.splice(source.index, 1);
+      newColumnOrder.splice(destination.index, 0,draggableId)
+
+      const newState = {
+        ...this.state,
+        columnOrder: newColumnOrder,
+      }
+      this.setState(newState)
+      return;
+    }
+
+    if(this.state.columns[destination.droppableId].type === 'trash'){
+      const NewTasks = this.state.tasks
       const NewColumns = this.state.columns
+      console.log(NewTasks[NewColumns[source.droppableId].taskIds[source.index]])
+      delete NewTasks[NewColumns[source.droppableId].taskIds[source.index]]
       NewColumns[source.droppableId].taskIds.splice(source.index,1)
+      delete NewTasks[source.draggableId]
       this.setState({
       columns: NewColumns
     })
@@ -95,16 +110,58 @@ class App extends Component {
     })
   };
 
-  createNewTask(content){
+  createNewTask(columnId,content){
     //create new task
     let newTasks = this.state.tasks
-    newTasks['task-' + this.state.idCount] = { id: 'task-' + this.state.idCount, content: content, completed: false, ProceedTime: 0}
+    newTasks['task-' + this.state.TaskIdCount] = { id: 'task-' + this.state.TaskIdCount, content: content, completed: false, ProceedTime: 0}
     let NewColumns = this.state.columns
-    NewColumns['column-1'].taskIds.push('task-' + this.state.idCount)
+    NewColumns[columnId].taskIds.push('task-' + this.state.TaskIdCount)
     this.setState({
-      idCount: this.state.idCount + 1,
+      TaskIdCount: this.state.TaskIdCount + 1,
       tasks: newTasks,
       columns: NewColumns,
+    })
+  }
+
+  createNewColumn =(columnType,title)=> {
+    let NewColumns = this.state.columns
+    NewColumns['column-' + this.state.ColumnIdCount] = { id: 'column-' + this.state.ColumnIdCount, type: columnType, title: title, taskIds: []}
+    let newColumnOrder = this.state.columnOrder
+    newColumnOrder.push('column-' + this.state.ColumnIdCount)
+    this.setState({
+      ColumnIdCount: this.state.ColumnIdCount + 1,
+      columns: NewColumns,
+      columnOrder: newColumnOrder
+    })
+  }
+
+  changeTaskContent =(taskId, content)=> {
+    let newTasks = this.state.tasks
+    newTasks[taskId].content = content
+    this.setState({
+      tasks: newTasks
+    })
+  }
+
+  changeColumnTitle =(columnId, title)=> {
+    let NewColumns = this.state.columns
+    NewColumns[columnId].title = title
+    this.setState({
+      columns: NewColumns
+    })
+  }
+
+  deleteColumn =(columnId)=>{
+    let newTasks = this.state.tasks
+    let NewColumns = this.state.columns
+    let newColumnOrder = this.state.columnOrder
+    NewColumns[columnId].taskIds.forEach(element => delete newTasks[element])
+    delete NewColumns[columnId]
+    newColumnOrder.splice(newColumnOrder.indexOf(columnId),1)
+    this.setState({
+      tasks: newTasks,
+      columns: NewColumns,
+      columnOrder: newColumnOrder
     })
   }
 
@@ -136,6 +193,7 @@ class App extends Component {
     let tasks = this.state.tasks
     let NewColumns = this.state.columns
     tasks[taskId].completed = state
+    /*
     if(state === true){
       if(this.state.columns['column-2'].taskIds.includes(taskId)){
         NewColumns['column-2'].taskIds.splice(NewColumns['column-2'].taskIds.indexOf(taskId),1)
@@ -145,6 +203,7 @@ class App extends Component {
         NewColumns['column-1'].taskIds.push(taskId)
       }
     }
+    */
     this.setState({
       tasks: tasks,
       columns: NewColumns
@@ -161,22 +220,42 @@ class App extends Component {
       */
       //<button onClick={this.CleanAll}>回復原廠設定</button>
   DisplayColumn = () => {
-    const ToDoColumn = this.state.columns['column-1']
-    const ToDoTasks = ToDoColumn.taskIds.map(taskId => this.state.tasks[taskId])
-    const Pomodoro = this.state.columns['column-2']
-    const PomodoroTasks = Pomodoro.taskIds.map(taskId => this.state.tasks[taskId])
-    const TrashCan = this.state.columns['column-3']
-    const TrashCanTasks = TrashCan.taskIds.map(taskId => this.state.tasks[taskId])
     return (
-      <div>
-        <ToDoDiv>
-          <Column key={ToDoColumn.id} column={ToDoColumn} tasks={ToDoTasks} createNewTask={this.createNewTask} ProceedTimeToTask={this.ProceedTimeToTask} completeTask={this.completeTask}/>
-          <Column key={TrashCan.id} column={TrashCan} tasks={TrashCanTasks} />
-        </ToDoDiv>
-        <PomodoroDiv>
-          <Column key={Pomodoro.id} column={Pomodoro} tasks={PomodoroTasks} ProceedTimeToTask={this.ProceedTimeToTask} completeTask={this.completeTask}/>
-        </PomodoroDiv>
-      </div>
+        <Droppable 
+          droppableId='all-columns' 
+          direction='horizontal' 
+          type='column'
+        >
+          {provided => (
+            <Container
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {this.state.columnOrder.map((columnId,index) => {
+                  const column = this.state.columns[columnId]
+                  const tasks = column.taskIds.map(
+                    taskId => this.state.tasks[taskId],
+                  );
+
+                  return (
+                    <Column 
+                      key={column.id} 
+                      column={column} 
+                      tasks={tasks} 
+                      index={index} 
+                      createNewTask={this.createNewTask}
+                      ProceedTimeToTask={this.ProceedTimeToTask}
+                      completeTask={this.completeTask}
+                      deleteColumn={this.deleteColumn}
+                      changeColumnTitle={this.changeColumnTitle}
+                      changeTaskContent={this.changeTaskContent}
+                            />
+                )
+              })}
+              {provided.placeholder}
+              </Container>
+          )}
+        </Droppable>
       )
   }
 
@@ -184,8 +263,9 @@ class App extends Component {
     return(
     <div>
       <DragDropContext  onDragEnd={this.onDragEnd}>
-      {this.DisplayColumn()}
+        {this.DisplayColumn()}
       </DragDropContext>
+      <OptionBoard CleanAll={this.CleanAll} createNewColumn={this.createNewColumn}/>
     </div>
     );
   }

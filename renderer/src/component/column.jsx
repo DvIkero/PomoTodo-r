@@ -1,22 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Droppable } from 'react-beautiful-dnd';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 import Task from './task.jsx'
 import Clock from './clock.jsx'
 
 //color sitting
 let color0 = "#cbd1d5" //background color
-//let color1 = "#607d92"
+let color1 = "#607d92"
 let color2  = "#869fb1"
 let color3 = "#b8c7d7"
 
-const TrashCan = styled.div`
-    padding: 8px;
-    background-color: ${props => (props.isDraggingOver ? '#cdcac5' : color2 )};
-    box-shadow: 0 0px 6px 0px ${props => (props.isDraggingOver ? '#cdcac5' : color2 )};
-    border: 0px;
-    border-radius: 2px;;
-`;
 /*
 const Container = styled.div`
     margin: 8px;
@@ -26,7 +19,9 @@ const Container = styled.div`
 `;
 */
 const Container = styled.div`
-    width: 290px;
+    position: relative;
+    width: fit-content;
+    height: fit-content;
     color: ${color3};
     background-color: ${color0};
     margin: 10px 5px;
@@ -34,8 +29,26 @@ const Container = styled.div`
     border-radius: 3px;
     box-shadow: 0px 0px 10px 3px ${color0}
 `;
+
+const StyleButton = styled.button`
+    position: absolute;
+    top:3px;
+    right: 3px;
+    background-color: transparent;
+    border: 0px;
+    color: ${color1};
+`;
+
 const Title = styled.h3`
     padding: 8px;
+`;
+
+const TitleInput = styled.textarea`
+    border: 0px;
+    max-width:266px;
+    font-size: 20px;
+    color: ${color1};
+    background-color: transparent;
 `;
 /*
 const TaskList = styled.div`
@@ -62,10 +75,11 @@ const InputForm = styled.input`
     background-color: "white";
 `;
 */
-const InputForm = styled.input`
+const InputForm = styled.textarea`
+    ::placeholder{color: ${color3}};
     position: relative;
-    left: 3px;
-    width:266px;
+    left: 0px;
+    width:fit-content;
     border: 1px solid ${color2};
     border-radius: 2px;
     background-color: ${color2};
@@ -79,7 +93,9 @@ const InputForm = styled.input`
 export default class Column extends React.Component {
 
     state:{
-        value: ""
+        value: "",
+        modifying: false,
+        title: ''
     }
 
     constructor(props){
@@ -87,13 +103,23 @@ export default class Column extends React.Component {
         this.createNewTask = this.createNewTask.bind(this)
         this.onChange = this.onChange.bind(this)
         this.state = {
-            value: ""
+            value: "",
+            modifying: false,
+            title: ''
         }
     }
 
-    createNewTask(e){
+    changeColumnTitle =(title)=> {
+        this.props.changeColumnTitle(this.props.column.id,title)
+    }
+
+    deleteColumn =()=>  {
+        this.props.deleteColumn(this.props.column.id)
+    }
+
+    createNewTask =(e)=> {
         if(e.target.value !== "" && e.key === 'Enter'){
-          this.props.createNewTask(e.target.value)
+          this.props.createNewTask(this.props.column.id,e.target.value)
           this.setState({
             value: ""
         })
@@ -104,6 +130,10 @@ export default class Column extends React.Component {
         this.props.ProceedTimeToTask(columnId, ProceedTime)
     }
       
+    changeTaskContent =(taskId, content)=> {
+        this.props.changeTaskContent(taskId, content)
+    }
+
     completeTask =(taskId, state)=> {
         this.props.completeTask(taskId, state)
     }
@@ -115,14 +145,10 @@ export default class Column extends React.Component {
         })
     }
 
-    render(){
-        if(this.props.column.type === 'Todo'){
-        return (
+    DisplayTaskList =(context)=> {
+        return(
             <div>
-                <Container>
-                    <Title>{this.props.column.title}</Title>
-                    <InputForm onKeyPress={this.createNewTask} value={this.state.value} onChange={this.onChange}></InputForm>
-                    <Droppable droppableId={this.props.column.id}>
+                <Droppable droppableId={this.props.column.id}>
                     {(provided,snapshot) => (
                         <TaskList
                             ref={provided.innerRef}
@@ -130,65 +156,127 @@ export default class Column extends React.Component {
                             isDraggingOver = {snapshot.isDraggingOver}
                         >
                             {this.props.tasks.map((task,index) => (
-                                <Task key={task.id} task={task} index={index} completeTask={this.completeTask}/>
+                                <Task 
+                                key={task.id} 
+                                task={task} 
+                                index={index} 
+                                completeTask={this.completeTask}
+                                changeTaskContent={this.changeTaskContent}
+                                />
                             ))}
                             {provided.placeholder}
-                            {(this.props.column.taskIds.length === 0) ? snapshot.isDraggingOver ? "" : "請將待辦放置於此或新增待辦" : ""}
+                            {(this.props.column.taskIds.length === 0) ? snapshot.isDraggingOver ? "" : context : ""}
                         </TaskList>
                     )}
-                    </Droppable>
-                </Container>
+                </Droppable>
             </div>
         )
+    }
+
+    DisplayTitle =(title)=>{
+
+        let modifying = this.state.modifying
+
+        const ModifyTitle =()=>{
+            if(!modifying){
+            modifying = !modifying
+            this.setState({
+                modifying: modifying,
+                title: title
+            })
+            }else{
+                return;
+            }
         }
-        if(this.props.column.type === 'Pomo'){
+
+        const onChange =(e)=>{
+            this.setState({
+                title: e.target.value
+            })
+        }
+
+        const Submit =(e)=> {
+            if(e.key === 'Enter'){
+                if(modifying){
+                    modifying = !modifying
+                    this.setState({
+                        modifying: modifying
+                    })
+                }else{
+                    return;
+                }
+                this.changeColumnTitle(this.state.title)
+            }
+        }
+
+        const DisplayInput =()=>{
+            return(
+                <TitleInput 
+                    onKeyPress={e =>{Submit(e)}}
+                    value={this.state.title}
+                    onChange={e => onChange(e)}
+                />
+            )
+        }
+
+        return(
+            <Title onClick={()=>{ModifyTitle()}}>
+                {modifying ? DisplayInput() :title}
+            </Title>
+        )
+    }
+
+    DisplayColumn =(columnType)=> {
+        if(columnType === 'Todo'){
             return (
                 <div>
-                    <Container>
-                        <Title>{this.props.column.title}</Title>
-                        <Droppable droppableId={this.props.column.id}>
-                        {(provided,snapshot) => (
-                            <TaskList
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                isDraggingOver = {snapshot.isDraggingOver}
-                            >
-                                {}
-                                {this.props.tasks.map((task,index) => (
-                                    <Task key={task.id} task={task} index={index} completeTask={this.completeTask} backgroundColor={'blue'}/>
-                                ))}
-                                {provided.placeholder}
-                                {(this.props.column.taskIds.length === 0) ? snapshot.isDraggingOver ? "" : "將待辦放置於此開始工作" : ""}
-                            </TaskList>
-                        )}
-                        </Droppable>
-                        <Clock ProceedTimeToTask={this.ProceedTimeToTask}/>
-
-                    </Container>
+                    <InputForm 
+                    onKeyPress={this.createNewTask} 
+                    value={this.state.value} 
+                    onChange={this.onChange}
+                    placeholder='新建任務...'
+                    >
+                    </InputForm>
+                    {this.DisplayTaskList('請將任務放置於此')}
                 </div>
             )
-        }
-        if(this.props.column.type === 'trash'){
-            return(
-                <Container>
-                        <Title>{this.props.column.title}</Title>
-                        <Droppable droppableId={this.props.column.id}>
-                        {(provided, snapshot) => (
-                            <TrashCan
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                isDraggingOver = {snapshot.isDraggingOver}
-                            >
-                                {this.props.tasks.map((task,index) => (
-                                    <Task key={task.id} task={task} index={index}/>
-                                ))}
-                                {provided.placeholder}
-                                {(this.props.column.taskIds.length === 0) ? snapshot.isDraggingOver ? "" : "刪除待辦" : ""}
-                            </TrashCan>
-                        )}
-                        </Droppable>
+            }
+            if(columnType === 'Pomo'){
+                return (
+                    <div>
+                            {this.DisplayTaskList('請將任務放置於此')}
+                        <Clock ProceedTimeToTask={this.ProceedTimeToTask}/>
+                    </div>
+                )
+            }
+            if(columnType === 'trash'){
+                return(
+                    <div>
+                        {this.DisplayTaskList('刪除任務')}
+                    </div>
+
+                )
+            }
+    }
+
+    render(){
+        return(
+            <Draggable draggableId={this.props.column.id} index={this.props.index}>
+            {provided => (
+                <Container
+                    {...provided.draggableProps}
+                    ref={provided.innerRef}
+                >
+                    <div {...provided.dragHandleProps}
+                    >
+                    {this.DisplayTitle(this.props.column.title)}
+                    </div>
+                    <StyleButton onClick={()=>{this.deleteColumn()}}>X</StyleButton>
+                    {this.DisplayColumn(this.props.column.type)}
+                    {provided.placeholder}
                 </Container>
-            )
-        }
+            )}
+            </Draggable>
+        )
     }
 }

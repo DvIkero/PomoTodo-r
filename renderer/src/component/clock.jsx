@@ -37,7 +37,7 @@ const DisplayBoardStyle = styled.div`
     position: relative;
     bottom: -10px;
     left: 3px;
-    width:266px;
+    width:auto;
     border: 1px solid ${color2};
     border-radius: 2px;
     background-color: ${color2};
@@ -51,7 +51,7 @@ const ButtonBoard = styled.div`
     position: relative;
     bottom: -10px;
     left: 3px;
-    width:266px;
+    width:auto;
     border: 1px solid ${color2};
     border-radius: 2px;
     background-color: ${color2};
@@ -65,7 +65,7 @@ const OptionBoardStyle = styled.div`
     position: relative;
     bottom: -10px;
     left: 3px;
-    width:266px;
+    width:auto;
     border: 1px solid ${color2};
     border-radius: 2px;
     background-color: ${color2};
