@@ -37,7 +37,7 @@ const DisplayBoardStyle = styled.div`
     position: relative;
     bottom: -10px;
     left: 3px;
-    width:266px;
+    width:auto;
     border: 1px solid ${color2};
     border-radius: 2px;
     background-color: ${color2};
@@ -51,7 +51,8 @@ const ButtonBoard = styled.div`
     position: relative;
     bottom: -10px;
     left: 3px;
-    width:266px;
+    width:auto;
+    min-width:210px;
     border: 1px solid ${color2};
     border-radius: 2px;
     background-color: ${color2};
@@ -65,7 +66,7 @@ const OptionBoardStyle = styled.div`
     position: relative;
     bottom: -10px;
     left: 3px;
-    width:266px;
+    width:auto;
     border: 1px solid ${color2};
     border-radius: 2px;
     background-color: ${color2};
@@ -386,7 +387,10 @@ class Clock extends React.Component {
       return(
         <div>
           <OptionBoardStyle>
+          <p>
           <StyleButton onClick={() => this.notify('開啟通知',true)}>{this.state.notifyMe ? "關閉通知" : "開啟通知"}</StyleButton>
+          ＊請注意有無開啟勿擾模式
+          </p>
           <p>work : {this.state.work}</p>
           <input name='work' type='range' min='1' max='60' value={this.state['work']} onChange={e => this.onChange(e)}></input>
           <p>short break : {this.state.shortBreak} </p>

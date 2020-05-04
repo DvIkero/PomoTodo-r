@@ -140,6 +140,8 @@ temp/
 **/*.backup.*
 **/*.back.*
 
+build/
+
 node_modules
 
 *.sublime*
