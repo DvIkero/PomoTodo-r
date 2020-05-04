@@ -52,6 +52,7 @@ const ButtonBoard = styled.div`
     bottom: -10px;
     left: 3px;
     width:auto;
+    min-width:210px;
     border: 1px solid ${color2};
     border-radius: 2px;
     background-color: ${color2};

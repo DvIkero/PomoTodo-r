@@ -1,5 +1,5 @@
 const initialDate = {
-    TaskIdCount: 5,
+    TaskIdCount: 6,
     ColumnIdCount: 4,
     tasks: {
         'task-1': { id: "task-1", content: '歡迎使用PomoTodo', completed: false, ProceedTime: 0},

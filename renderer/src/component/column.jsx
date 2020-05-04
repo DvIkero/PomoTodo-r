@@ -107,6 +107,8 @@ export default class Column extends React.Component {
             modifying: false,
             title: ''
         }
+        console.log('constructor')
+        console.log(this.props)
     }
 
     changeColumnTitle =(title)=> {

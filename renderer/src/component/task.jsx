@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
-import OptionBoard from './OptionBoard';
 
 //color sitting
 let color0 = "#465c70"

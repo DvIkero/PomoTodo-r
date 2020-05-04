@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Draggable } from 'react-beautiful-dnd';
 
 let color0 = "#cbd1d5" //background color
 let color1 = "#607d92"
