@@ -386,7 +386,10 @@ class Clock extends React.Component {
       return(
         <div>
           <OptionBoardStyle>
+          <p>
           <StyleButton onClick={() => this.notify('開啟通知',true)}>{this.state.notifyMe ? "關閉通知" : "開啟通知"}</StyleButton>
+          ＊請注意有無開啟勿擾模式
+          </p>
           <p>work : {this.state.work}</p>
           <input name='work' type='range' min='1' max='60' value={this.state['work']} onChange={e => this.onChange(e)}></input>
           <p>short break : {this.state.shortBreak} </p>
