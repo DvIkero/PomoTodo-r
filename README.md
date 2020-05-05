@@ -26,7 +26,7 @@ npm start
 
 受限於網盤流量，目前只打包Windows版本，若您要在其他平台上安裝，請考慮打包：
 
-Windows: https://www.jianguoyun.com/p/DWyMomYQ9byvCBi7-JID
+Windows: https://www.jianguoyun.com/p/DSmPh9gQ9byvCBjYwpUD
 
 ## 打包
 
