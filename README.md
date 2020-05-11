@@ -1,3 +1,8 @@
+![image](https://github.com/DvIkero/PomoTodo-r/blob/master/img/Pomotodo2.0%E8%AA%AA%E6%98%8E%E6%9B%B8_%E9%A0%81%E9%9D%A2_1.jpg)
+![image](https://github.com/DvIkero/PomoTodo-r/blob/master/img/Pomotodo2.0%E8%AA%AA%E6%98%8E%E6%9B%B8_%E9%A0%81%E9%9D%A2_2.jpg)
+![image](https://github.com/DvIkero/PomoTodo-r/blob/master/img/Pomotodo2.0%E8%AA%AA%E6%98%8E%E6%9B%B8_%E9%A0%81%E9%9D%A2_3.jpg)
+
+
 # PomoTodo-r
 
 這個是一個以React和Electron所建立起的PomoTodo版本，雖然目標同樣是創建一個結合蕃茄鐘和待辦事項的APP，但這個版本的各個方面和PomoTodo主線不同。
