@@ -1,6 +1,6 @@
 # PomoTodo-r
 
-以React和Electron所建立起，目标是创建一个结合蕃茄钟和待办事项的APP。
+以React和Electron所建立，目标是创建一个结合蕃茄钟和待办事项的APP。
 
 希望每一位使用者都能享受它。
 
